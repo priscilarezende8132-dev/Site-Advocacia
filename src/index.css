@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 /* Usando a nova sintaxe do Tailwind v4 */
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /* Configurações personalizadas */
 @theme {
