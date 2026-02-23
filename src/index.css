@@ -1,0 +1,84 @@
+/* Importando a fonte */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* Usando a nova sintaxe do Tailwind v4 */
+@import 'tailwindcss';
+
+/* Configurações personalizadas */
+@theme {
+  --color-primary: #0a2472;
+  --color-secondary: #1e3a8a;
+  --color-accent: #ffd700;
+  
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* Componentes customizados */
+@layer components {
+  .container-custom {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .nav-link {
+    color: white;
+    transition: color 0.3s;
+    font-weight: 500;
+    margin-left: 2rem;
+  }
+  
+  .nav-link:hover {
+    color: var(--color-accent);
+  }
+  
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: var(--color-primary);
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    display: inline-block;
+    transition: transform 0.3s;
+  }
+  
+  .btn-primary:hover {
+    transform: scale(1.05);
+  }
+  
+  .card {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  
+  .card:hover {
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    transform: translateY(-0.5rem);
+  }
+  
+  .section-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+}
+
+/* Estilos base */
+@layer base {
+  html {
+    font-family: var(--font-family-sans);
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    background-color: #f9fafb;
+  }
+}

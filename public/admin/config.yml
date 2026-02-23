@@ -1,0 +1,121 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "public/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  # ========== CONFIGURAÇÕES GERAIS ==========
+  - name: "settings"
+    label: "Configurações"
+    delete: false
+    editor:
+      preview: false
+    files:
+      - name: "general"
+        label: "Informações do Escritório"
+        file: "src/content/settings/general.md"
+        fields:
+          - {label: "Nome do Escritório", name: "site_name", widget: "string", default: "Dr. Carlos Silva"}
+          - {label: "Telefone", name: "phone", widget: "string", default: "(11) 1234-5678"}
+          - {label: "Email", name: "email", widget: "string", default: "contato@drcarlos.adv.br"}
+          - {label: "Endereço", name: "address", widget: "text", default: "Av. Paulista, 1000 - São Paulo/SP"}
+          - {label: "Horário de Funcionamento", name: "hours", widget: "text", default: "Seg a Sex: 9h às 18h | Sáb: 9h às 13h"}
+          - {label: "Número da OAB", name: "oab", widget: "string", default: "OAB/SP 123.456"}
+          - {label: "Logo do Site", name: "logo", widget: "image", required: false}
+
+  # ========== PÁGINA INICIAL ==========
+  - name: "home"
+    label: "Página Inicial"
+    delete: false
+    editor:
+      preview: false
+    files:
+      - name: "home"
+        label: "Conteúdo da Home"
+        file: "src/content/pages/home.md"
+        fields:
+          - {label: "Título Principal", name: "hero_title", widget: "string", default: "Excelência e Compromisso com seus direitos"}
+          - {label: "Subtítulo", name: "hero_subtitle", widget: "text", default: "Mais de 15 anos defendendo os interesses de nossos clientes"}
+          - {label: "Imagem de Fundo", name: "hero_image", widget: "image", required: false}
+          - label: "Áreas de Atuação (Lista)"
+            name: "areas"
+            widget: "list"
+            fields:
+              - {label: "Ícone", name: "icon", widget: "string", default: "⚖️"}
+              - {label: "Título", name: "title", widget: "string"}
+              - {label: "Descrição", name: "description", widget: "text"}
+          - label: "Diferenciais"
+            name: "differentials"
+            widget: "list"
+            fields:
+              - {label: "Ícone", name: "icon", widget: "string"}
+              - {label: "Título", name: "title", widget: "string"}
+              - {label: "Descrição", name: "description", widget: "text"}
+
+  # ========== BLOG (ARTIGOS) ==========
+  - name: "blog"
+    label: "Artigos do Blog"
+    label_singular: "Artigo"
+    folder: "src/content/posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - {label: "Título do Artigo", name: "title", widget: "string", required: true}
+      - {label: "Data de Publicação", name: "date", widget: "datetime", required: true}
+      - {label: "Categoria", name: "category", widget: "select", options: ["Direito Civil", "Direito Trabalhista", "Direito Penal", "Direito Tributário", "Direito Empresarial", "Direito de Família", "Direito do Consumidor"]}
+      - {label: "Resumo/Descrição", name: "description", widget: "text", required: true}
+      - {label: "Imagem de Destaque", name: "image", widget: "image", required: false}
+      - {label: "Conteúdo do Artigo", name: "body", widget: "markdown", required: true}
+      - {label: "Tags", name: "tags", widget: "list", required: false}
+      - {label: "Autor", name: "author", widget: "string", default: "Dr. Carlos Silva"}
+
+  # ========== PÁGINA SOBRE ==========
+  - name: "about"
+    label: "Página Sobre"
+    delete: false
+    files:
+      - name: "about"
+        label: "Conteúdo da Página Sobre"
+        file: "src/content/pages/about.md"
+        fields:
+          - {label: "Título da Página", name: "title", widget: "string", default: "Sobre Nós"}
+          - {label: "Foto do Advogado", name: "lawyer_photo", widget: "image", required: false}
+          - {label: "Texto Principal", name: "main_text", widget: "markdown"}
+          - label: "Formação Acadêmica"
+            name: "education"
+            widget: "list"
+            fields:
+              - {label: "Curso", name: "course", widget: "string"}
+              - {label: "Instituição", name: "institution", widget: "string"}
+              - {label: "Ano", name: "year", widget: "string"}
+          - {label: "Experiência (anos)", name: "experience", widget: "number", default: 15}
+          - {label: "Casos de Sucesso", name: "cases", widget: "number", default: 500}
+
+  # ========== PÁGINA CONTATO ==========
+  - name: "contact"
+    label: "Página Contato"
+    delete: false
+    files:
+      - name: "contact"
+        label: "Conteúdo da Página Contato"
+        file: "src/content/pages/contact.md"
+        fields:
+          - {label: "Título", name: "title", widget: "string", default: "Entre em Contato"}
+          - {label: "Texto de Introdução", name: "intro", widget: "text"}
+          - label: "Informações de Contato"
+            name: "info"
+            widget: "object"
+            fields:
+              - {label: "Telefone", name: "phone", widget: "string"}
+              - {label: "WhatsApp", name: "whatsapp", widget: "string"}
+              - {label: "Email", name: "email", widget: "string"}
+              - {label: "Endereço", name: "address", widget: "text"}
+          - label: "Redes Sociais"
+            name: "social"
+            widget: "object"
+            fields:
+              - {label: "Instagram", name: "instagram", widget: "string", required: false}
+              - {label: "LinkedIn", name: "linkedin", widget: "string", required: false}
+              - {label: "Facebook", name: "facebook", widget: "string", required: false}
