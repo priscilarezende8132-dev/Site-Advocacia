@@ -14,4 +14,19 @@ collections:
     fields:
       - {label: "Título", name: "title", widget: "string"}
       - {label: "Data", name: "date", widget: "datetime"}
+      - {label: "Categoria", name: "category", widget: "string", required: false}
+      - {label: "Descrição", name: "description", widget: "text", required: false}
       - {label: "Conteúdo", name: "body", widget: "markdown"}
+
+  # NOVA COLEÇÃO PARA O ÍNDICE
+  - name: "index"
+    label: "Índice de Artigos"
+    files:
+      - name: "posts-index"
+        label: "Lista de Artigos"
+        file: "src/content/posts/index.json"
+        fields:
+          - label: "Artigos"
+            name: "posts"
+            widget: "list"
+            field: {label: "Slug", name: "slug", widget: "string"}

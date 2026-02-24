@@ -24,29 +24,16 @@ export default function Blog() {
         const settingsData = await loadContent('/src/content/settings/general.md');
         setContent(prev => ({ ...prev, ...settingsData?.data }));
 
-        // CARREGAR LISTA DE POSTS AUTOMATICAMENTE
+        // PASSO 1: Carregar o index.json com a lista de slugs
+        const indexResponse = await fetch('/src/content/posts/index.json');
         let slugs = [];
         
-        // Tenta usar a função serverless (em produção)
-        try {
-          const response = await fetch('/.netlify/functions/list-posts');
-          if (response.ok) {
-            const data = await response.json();
-            slugs = data.posts;
-          }
-        } catch (error) {
-          console.log('Usando fallback local');
+        if (indexResponse.ok) {
+          const indexData = await indexResponse.json();
+          slugs = indexData.posts || [];
         }
 
-        // Fallback para desenvolvimento local
-        if (slugs.length === 0) {
-          // Em desenvolvimento, você pode manter uma lista manual
-          slugs = [
-            'primeiro-artigo'
-          ];
-        }
-        
-        // Carregar cada post
+        // PASSO 2: Carregar cada post pelo slug
         const postsData = [];
         
         for (const slug of slugs) {
@@ -66,7 +53,7 @@ export default function Blog() {
           }
         }
         
-        // Ordenar por data (mais recentes primeiro)
+        // Ordenar por data
         postsData.sort((a, b) => new Date(b.data.date) - new Date(a.data.date));
         setPosts(postsData);
       } catch (error) {
@@ -94,6 +81,7 @@ export default function Blog() {
     return { data, content: match[2] };
   }
 
+  // Filtros
   const filteredPosts = posts.filter(post => {
     if (!post || !post.data) return false;
     
