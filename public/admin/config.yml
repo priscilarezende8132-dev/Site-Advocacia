@@ -1,15 +1,12 @@
 ﻿backend:
-  name: github
-  repo: Octavio345/Site-Advocacia
+  name: git-gateway
   branch: main
-  base_url: https://site-advocacia-one.vercel.app
-  auth_endpoint: api/auth
 
 media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
 collections:
-  - name: "posts"  # ← NOME ÚNICO
+  - name: "posts"
     label: "Artigos"
     folder: "src/content/posts"
     create: true
