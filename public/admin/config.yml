@@ -27,7 +27,7 @@ collections:
     files:
       - name: "postsIndexFile"
         label: "Lista de Artigos"
-        file: "src/content/posts/posts.json"
+        file: "/posts.json"
         fields:
           - label: "Artigos"
             name: "posts"

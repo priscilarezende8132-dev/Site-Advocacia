@@ -23,7 +23,7 @@ export default function Blog() {
         setContent(prev => ({ ...prev, ...settingsData?.data }));
 
         // 1️⃣ Carrega a lista de slugs do posts.json
-        const indexRes = await fetch('/src/content/posts/posts.json');
+        const indexRes = await fetch('/posts.json');
         const indexData = await indexRes.json();
         const slugs = indexData.posts || [];
 
