@@ -21,7 +21,7 @@ collections:
       - {label: "Autor", name: "author", widget: "string", default: "Dr. Carlos Silva"}
       - {label: "Conteúdo", name: "body", widget: "markdown"}
 
-  # Lista de artigos (agora com SELECT em vez de RELATION)
+  # Lista de artigos (RELATION PURA, SEM OPTIONS COMPLEXAS)
   - name: "postsIndex"
     label: "Lista de Artigos"
     files:
@@ -34,9 +34,9 @@ collections:
             widget: "list"
             field:
               name: "slug"
-              widget: "select"
-              choices: "{{entries}}"
-              options:
-                from: "posts"
-                value_field: "slug"
-                label_field: "title"
+              widget: "relation"
+              collection: "posts"
+              search_fields: ["title"]
+              value_field: "slug"
+              display_fields: ["title"]
+              multiple: false
