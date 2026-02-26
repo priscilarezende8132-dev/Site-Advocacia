@@ -342,10 +342,11 @@ export default function Post() {
 
   return (
     <div className="min-h-screen bg-[#F9F7F4]">
-      {/* HEADER COM AZUL ESCURO E MESMAS ANIMAÇÕES */}
+      {/* HEADER COM AZUL ESCURO E HOVER IGUAL AO ORIGINAL */}
       <div className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-blue-800 py-3 shadow-lg">
         <div className="container-custom">
           <div className="flex justify-between items-center">
+            {/* Logo com hover igual ao original */}
             <Link to="/" className="relative group">
               <h1 className="text-2xl font-bold text-white">
                 {content.siteName}
@@ -353,9 +354,10 @@ export default function Post() {
               <p className="text-sm text-white/80">
                 {content.oab}
               </p>
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-500 transition-all group-hover:w-full"></span>
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-500 transition-all duration-300 group-hover:w-full"></span>
             </Link>
             
+            {/* Menu com hover IGUAL ao original */}
             <nav className="hidden md:flex items-center space-x-8">
               {['Início', 'Artigos', 'Sobre', 'Contato'].map((item) => (
                 <Link
@@ -364,11 +366,12 @@ export default function Post() {
                   className="relative text-white font-medium transition-all duration-300 hover:text-gold-500 group"
                 >
                   {item}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-500 transition-all group-hover:w-full"></span>
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold-500 transition-all duration-300 group-hover:w-full"></span>
                 </Link>
               ))}
             </nav>
 
+            {/* Botão WhatsApp com animação */}
             <a
               href={`https://wa.me/${content.whatsapp}`}
               target="_blank"
