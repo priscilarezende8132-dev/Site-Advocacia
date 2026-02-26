@@ -28,6 +28,7 @@ export default function Post() {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showShareMenu, setShowShareMenu] = useState(false);
+  const [showLoading, setShowLoading] = useState(true);
   const articleRef = useRef(null);
   const [content, setContent] = useState({
     siteName: 'Dr. Carlos Silva',
@@ -54,7 +55,11 @@ export default function Post() {
         console.error('Erro ao carregar post:', error);
         setPost(null);
       } finally {
-        setLoading(false);
+        // Delay mínimo de 1.5 segundos para mostrar a tela de carregamento
+        setTimeout(() => {
+          setLoading(false);
+          setTimeout(() => setShowLoading(false), 500);
+        }, 1500);
       }
     }
 
@@ -267,26 +272,41 @@ export default function Post() {
     setShowShareMenu(false);
   };
 
-  // TELA DE CARREGAMENTO
-  if (loading) {
+  // TELA DE CARREGAMENTO COM ANIMAÇÃO DE SAÍDA
+  if (loading || showLoading) {
     return (
-      <div className="min-h-screen bg-primary flex items-center justify-center">
+      <motion.div 
+        initial={{ opacity: 1 }}
+        animate={{ opacity: loading ? 1 : 0 }}
+        transition={{ duration: 0.5 }}
+        className="min-h-screen bg-primary fixed inset-0 z-[200] flex items-center justify-center"
+      >
         <div className="text-center">
           <div className="relative w-32 h-32 mx-auto mb-8">
             <div className="absolute inset-0 border-2 border-gold-500/20 rounded-full"></div>
             <div className="absolute inset-0 border-2 border-gold-500 border-t-transparent rounded-full animate-spin"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-4xl text-gold-500">⚖️</span>
+              <span className="text-4xl text-gold-500 animate-pulse">⚖️</span>
             </div>
           </div>
-          <p className="text-gold-500/80 font-serif italic text-lg tracking-wide">
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-gold-500/80 font-serif italic text-lg tracking-wide"
+          >
             Carregando artigo jurídico...
-          </p>
-          <p className="text-navy-300 text-sm mt-4 font-light">
+          </motion.p>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="text-navy-300 text-sm mt-4 font-light"
+          >
             {content.siteName} • {content.oab}
-          </p>
+          </motion.p>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -339,7 +359,7 @@ export default function Post() {
 
   return (
     <div className="min-h-screen bg-[#F9F7F4]">
-      {/* HEADER - AGORA IGUAL AO DA HOME */}
+      {/* HEADER - AGORA FUNCIONANDO CORRETAMENTE */}
       <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
       
       {/* Espaçamento para compensar o header fixo */}
