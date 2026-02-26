@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { motion } from 'framer-motion';
@@ -27,6 +27,8 @@ export default function Post() {
   const { slug } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const articleRef = useRef(null);
   const [content, setContent] = useState({
     siteName: 'Dr. Carlos Silva',
     oab: 'OAB/SP 123.456',
@@ -69,6 +71,201 @@ export default function Post() {
     });
     return marked.parse(content);
   }
+
+  const handlePrint = () => {
+    const printWindow = window.open('', '_blank');
+    const articleContent = articleRef.current?.innerHTML || '';
+    
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${post?.data?.title || 'Artigo'} - ${content.siteName}</title>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+            
+            * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            
+            body {
+              font-family: 'Merriweather', Georgia, serif;
+              background-color: #F9F7F4;
+              color: #2C3E50;
+              line-height: 1.8;
+              padding: 40px 20px;
+            }
+            
+            .print-container {
+              max-width: 800px;
+              margin: 0 auto;
+              background-color: white;
+              padding: 60px;
+              border-radius: 8px;
+              box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            }
+            
+            h1 {
+              font-size: 2.5rem;
+              font-weight: 700;
+              color: #1A2C3E;
+              margin-bottom: 1rem;
+              font-family: 'Merriweather', serif;
+              line-height: 1.3;
+            }
+            
+            .metadata {
+              color: #666;
+              font-size: 0.9rem;
+              margin-bottom: 2rem;
+              padding-bottom: 1rem;
+              border-bottom: 2px solid #D4AF37;
+              font-family: 'Inter', sans-serif;
+            }
+            
+            h2 {
+              font-size: 1.8rem;
+              font-weight: 600;
+              color: #1A2C3E;
+              margin-top: 2rem;
+              margin-bottom: 1rem;
+              font-family: 'Merriweather', serif;
+            }
+            
+            h2:before {
+              content: '';
+              display: inline-block;
+              width: 30px;
+              height: 2px;
+              background: #D4AF37;
+              margin-right: 15px;
+              vertical-align: middle;
+            }
+            
+            h3 {
+              font-size: 1.4rem;
+              font-weight: 600;
+              color: #2C3E50;
+              margin-top: 1.5rem;
+              margin-bottom: 0.75rem;
+            }
+            
+            p {
+              margin-bottom: 1.5rem;
+              font-size: 1.1rem;
+              line-height: 1.9;
+              color: #2C3E50;
+            }
+            
+            blockquote {
+              border-left: 4px solid #D4AF37;
+              background-color: #F8F4F0;
+              padding: 1.5rem 2rem;
+              margin: 2rem 0;
+              font-style: italic;
+              border-radius: 0 8px 8px 0;
+            }
+            
+            ul, ol {
+              margin: 1.5rem 0 1.5rem 2rem;
+            }
+            
+            li {
+              margin-bottom: 0.5rem;
+            }
+            
+            .footer-note {
+              margin-top: 3rem;
+              padding-top: 1.5rem;
+              border-top: 1px solid #ddd;
+              font-size: 0.9rem;
+              color: #666;
+              text-align: center;
+              font-family: 'Inter', sans-serif;
+            }
+            
+            @media print {
+              body {
+                background-color: white;
+                padding: 0;
+              }
+              .print-container {
+                box-shadow: none;
+                padding: 40px;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print-container">
+            <h1>${post?.data?.title || ''}</h1>
+            <div class="metadata">
+              ${post?.data?.date ? new Date(post.data.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : ''} | 
+              ${post?.data?.author || `Dr. ${content.siteName}`} | 
+              ${content.oab}
+            </div>
+            ${articleContent}
+            <div class="footer-note">
+              Publicado por ${content.siteName} • ${content.oab}<br>
+              Fonte: ${window.location.href}
+            </div>
+          </div>
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  };
+
+  const handleShare = async () => {
+    const shareData = {
+      title: post?.data?.title || 'Artigo Jurídico',
+      text: post?.data?.description || 'Confira este artigo jurídico',
+      url: window.location.href
+    };
+
+    try {
+      if (navigator.share && window.innerWidth <= 768) {
+        await navigator.share(shareData);
+      } else {
+        setShowShareMenu(!showShareMenu);
+      }
+    } catch (error) {
+      console.log('Erro ao compartilhar:', error);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert('Link copiado para a área de transferência!');
+    setShowShareMenu(false);
+  };
+
+  const shareOnWhatsApp = () => {
+    const text = encodeURIComponent(`Confira este artigo: ${post?.data?.title} - ${window.location.href}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+    setShowShareMenu(false);
+  };
+
+  const shareOnLinkedIn = () => {
+    const url = encodeURIComponent(window.location.href);
+    const title = encodeURIComponent(post?.data?.title || '');
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+    setShowShareMenu(false);
+  };
+
+  const shareOnTwitter = () => {
+    const text = encodeURIComponent(post?.data?.title || '');
+    const url = encodeURIComponent(window.location.href);
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+    setShowShareMenu(false);
+  };
 
   if (loading) {
     return (
@@ -119,11 +316,16 @@ export default function Post() {
 
   return (
     <div className="min-h-screen bg-[#F9F7F4]">
-      {/* Header Fixo */}
-      <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
+      {/* Header SEMPRE FIXO */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-md">
+        <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
+      </div>
+      
+      {/* Espaçamento para compensar o header fixo */}
+      <div className="h-24"></div>
 
       {/* Hero simplificado - apenas título */}
-      <div className="bg-white border-b border-gray-200 py-20">
+      <div className="bg-white border-b border-gray-200 py-16">
         <div className="container-custom max-w-4xl">
           <Link
             to="/blog"
@@ -189,8 +391,10 @@ export default function Post() {
           </div>
         )}
 
-        {/* Artigo com estilo inspirado em publicações jurídicas */}
-        <article className="
+        {/* Artigo - com ref para impressão */}
+        <article 
+          ref={articleRef}
+          className="
           prose prose-lg max-w-none
           prose-headings:font-serif prose-headings:text-primary prose-headings:font-bold
           
@@ -261,16 +465,74 @@ export default function Post() {
           </div>
         </div>
 
-        {/* Informações de leitura */}
-        <div className="mt-12 flex items-center justify-between text-sm text-gray-400">
-          <span className="flex items-center gap-2">
-            <span>⏱️</span>
-            Tempo de leitura: ~{Math.ceil(post.content.split(' ').length / 200)} min
-          </span>
-          <span className="flex items-center gap-2">
-            <span>📄</span>
-            {Math.ceil(post.content.split(' ').length / 1000)} páginas
-          </span>
+        {/* Informações de leitura e ações */}
+        <div className="mt-12 flex flex-wrap items-center justify-between gap-4 text-sm text-gray-400">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-2">
+              <span>⏱️</span>
+              {Math.ceil(post.content.split(' ').length / 200)} min de leitura
+            </span>
+            <span className="flex items-center gap-2">
+              <span>📄</span>
+              {Math.ceil(post.content.split(' ').length / 1000)} páginas
+            </span>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {/* Botão Compartilhar profissional */}
+            <div className="relative">
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-accent hover:text-accent transition-all shadow-sm"
+              >
+                <span>📤</span>
+                <span className="hidden sm:inline">Compartilhar</span>
+              </button>
+              
+              {/* Menu de compartilhamento */}
+              {showShareMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50">
+                  <button
+                    onClick={copyToClipboard}
+                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-3 transition-colors"
+                  >
+                    <span>🔗</span>
+                    Copiar link
+                  </button>
+                  <button
+                    onClick={shareOnWhatsApp}
+                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-3 transition-colors"
+                  >
+                    <span>📱</span>
+                    WhatsApp
+                  </button>
+                  <button
+                    onClick={shareOnLinkedIn}
+                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-3 transition-colors"
+                  >
+                    <span>💼</span>
+                    LinkedIn
+                  </button>
+                  <button
+                    onClick={shareOnTwitter}
+                    className="w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-50 hover:text-accent flex items-center gap-3 transition-colors"
+                  >
+                    <span>🐦</span>
+                    Twitter
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Botão Imprimir */}
+            <button
+              onClick={handlePrint}
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-accent hover:text-accent transition-all shadow-sm"
+            >
+              <span>🖨️</span>
+              <span className="hidden sm:inline">Imprimir</span>
+            </button>
+          </div>
         </div>
 
         {/* Bio do autor simplificada */}
@@ -292,7 +554,7 @@ export default function Post() {
         </div>
 
         {/* Navegação entre artigos */}
-        <div className="mt-12 flex justify-between items-center">
+        <div className="mt-12 pt-6 border-t border-gray-200 flex justify-between items-center">
           <Link
             to="/blog"
             className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors group"
@@ -301,11 +563,11 @@ export default function Post() {
             Todos os artigos
           </Link>
           <button
-            onClick={() => window.print()}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="inline-flex items-center gap-2 text-gray-500 hover:text-accent transition-colors"
           >
-            <span>Imprimir</span>
-            <span>🖨️</span>
+            <span>Voltar ao topo</span>
+            <span>↑</span>
           </button>
         </div>
       </main>
