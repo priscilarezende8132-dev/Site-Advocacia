@@ -70,22 +70,14 @@ export default function Post() {
   // --------------------------------------------------------------------
   if (loading) {
     return (
-      <div className="min-h-screen bg-navy-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          {/* Loader sofisticado */}
-          <div className="relative w-32 h-32 mx-auto mb-8">
-            <div className="absolute inset-0 border-2 border-gold-500/20 rounded-full" />
-            <div className="absolute inset-0 border-2 border-gold-500 border-t-transparent rounded-full animate-spin" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-4xl text-gold-500">⚖️</span>
-            </div>
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="absolute inset-0 border-4 border-navy-200 rounded-full" />
+            <div className="absolute inset-0 border-4 border-gold-500 border-t-transparent rounded-full animate-spin" />
           </div>
-          <p className="text-gold-500/80 font-serif italic text-lg tracking-wide">
-            Carregando documento jurídico...
-          </p>
-          <p className="text-navy-300 text-sm mt-4 font-light">
-            {content.siteName} • {content.oab}
-          </p>
+          <p className="text-navy-800 font-medium">Carregando artigo...</p>
+          <p className="text-navy-500 text-sm mt-2">{content.siteName}</p>
         </div>
       </div>
     );
@@ -93,40 +85,32 @@ export default function Post() {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-navy-900">
+      <div className="min-h-screen bg-white">
         {/* Header fixo */}
-        <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
+        <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-navy-100">
+          <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
+        </div>
 
-        {/* Faixa dourada decorativa */}
-        <div className="h-1 bg-gradient-to-r from-gold-500/0 via-gold-500 to-gold-500/0" />
-
-        <div className="flex items-center justify-center px-4 py-20">
+        <main className="container mx-auto px-4 py-20 max-w-3xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-2xl text-center"
           >
-            <div className="w-40 h-40 mx-auto mb-8 bg-navy-800 rounded-full flex items-center justify-center border-2 border-gold-500/30">
-              <span className="text-6xl text-gold-500">📜</span>
+            <div className="w-24 h-24 mx-auto mb-6 bg-navy-50 rounded-full flex items-center justify-center">
+              <span className="text-4xl text-navy-400">📄</span>
             </div>
-
-            <h1 className="text-5xl font-serif font-bold text-gold-500 mb-4">
-              Artigo não encontrado
-            </h1>
-
-            <p className="text-xl text-navy-300 mb-12 font-light">
+            <h1 className="text-4xl font-bold text-navy-900 mb-4">Artigo não encontrado</h1>
+            <p className="text-navy-600 mb-8">
               O artigo que você procura pode ter sido removido ou ainda não foi publicado.
             </p>
-
             <Link
               to="/blog"
-              className="inline-flex items-center gap-3 px-10 py-5 bg-gold-500 text-navy-900 font-serif text-lg hover:bg-gold-600 transition-all shadow-2xl hover:shadow-gold-500/20 group"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-navy-900 text-white rounded-lg hover:bg-navy-800 transition-colors"
             >
-              <span className="group-hover:-translate-x-1 transition-transform">←</span>
-              Voltar para o blog
+              <span>←</span> Voltar para o blog
             </Link>
           </motion.div>
-        </div>
+        </main>
 
         <Footer
           siteName={content.siteName}
@@ -149,286 +133,162 @@ export default function Post() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-navy-50"
+      className="min-h-screen bg-white"
     >
-      {/* HEADER FIXO COM SOMBRA E EFEITO DE VIDRO */}
-      <div className="sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-navy-200 shadow-lg">
+      {/* HEADER FIXO COM EFEITO DE VIDRO */}
+      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-navy-100">
         <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
       </div>
 
-      {/* Faixa dourada decorativa abaixo do header */}
-      <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-gold-500/0 via-gold-500/20 to-gold-500/0 h-px" />
-        <div className="h-12 bg-gradient-to-b from-navy-900/5 to-transparent" />
-      </div>
-
-      {/* Conteúdo principal */}
-      <main className="container-custom max-w-5xl py-16">
+      {/* CONTEÚDO PRINCIPAL */}
+      <main className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Breadcrumb */}
-        <motion.div
+        <motion.nav
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="mb-12"
+          className="mb-8 text-sm"
         >
-          <Link
-            to="/blog"
-            className="inline-flex items-center gap-3 text-navy-600 hover:text-gold-600 transition-colors group text-sm uppercase tracking-wider font-medium"
-          >
-            <span className="w-8 h-px bg-gold-500/50 group-hover:w-12 transition-all" />
-            <span className="group-hover:translate-x-1 transition-transform">
-              Voltar para artigos
-            </span>
+          <Link to="/blog" className="text-navy-500 hover:text-gold-600 transition-colors">
+            Blog
           </Link>
-        </motion.div>
+          <span className="mx-2 text-navy-300">/</span>
+          <span className="text-navy-900 font-medium">{post.data.title}</span>
+        </motion.nav>
 
-        {/* Card principal com textura de pergaminho */}
+        {/* Card do artigo */}
         <motion.article
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="bg-white rounded-sm shadow-2xl border border-navy-200 relative overflow-hidden"
+          transition={{ duration: 0.5 }}
+          className="bg-white rounded-2xl shadow-xl border border-navy-100 overflow-hidden"
         >
-          {/* Textura de fundo (pergaminho) */}
-          <div
-            className="absolute inset-0 opacity-5 pointer-events-none"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E")`,
+          {/* Cabeçalho */}
+          <header className="p-8 md:p-12 border-b border-navy-100">
+            {post.data.category && (
+              <div className="mb-4">
+                <span className="inline-block px-3 py-1 bg-navy-50 text-navy-700 text-xs font-semibold uppercase tracking-wider rounded-full">
+                  {post.data.category}
+                </span>
+              </div>
+            )}
+            <h1 className="text-4xl md:text-5xl font-bold text-navy-900 mb-6 leading-tight">
+              {post.data.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-4 text-navy-600">
+              {post.data.date && (
+                <time className="flex items-center gap-1">
+                  <span className="text-gold-500">📅</span>
+                  {new Date(post.data.date).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                </time>
+              )}
+              <span className="w-1 h-1 bg-navy-300 rounded-full" />
+              <span className="flex items-center gap-1">
+                <span className="text-gold-500">⚖️</span>
+                {post.data.author || `Dr. ${content.siteName}`}
+              </span>
+              <span className="w-1 h-1 bg-navy-300 rounded-full" />
+              <span className="flex items-center gap-1">
+                <span className="text-gold-500">📋</span>
+                {content.oab}
+              </span>
+            </div>
+          </header>
+
+          {/* Imagem de destaque */}
+          {post.data.image && (
+            <figure className="relative h-[400px] md:h-[500px] overflow-hidden">
+              <img
+                src={post.data.image}
+                alt={post.data.title}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            </figure>
+          )}
+
+          {/* Descrição */}
+          {post.data.description && (
+            <div className="px-8 md:px-12 pt-8 md:pt-12">
+              <blockquote className="text-xl text-navy-700 italic border-l-4 border-gold-500 pl-6 py-2 bg-navy-50/50 rounded-r-lg">
+                "{post.data.description}"
+              </blockquote>
+            </div>
+          )}
+
+          {/* Conteúdo do artigo */}
+          <div className="p-8 md:p-12 prose prose-lg max-w-none
+            prose-headings:font-bold prose-headings:text-navy-900
+            prose-h1:text-3xl prose-h1:mt-12 prose-h1:mb-6
+            prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:pb-2 prose-h2:border-b prose-h2:border-navy-200
+            prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3
+            prose-p:text-navy-700 prose-p:leading-relaxed prose-p:mb-6
+            prose-a:text-gold-600 hover:prose-a:text-gold-500 prose-a:no-underline hover:prose-a:underline
+            prose-strong:text-navy-900
+            prose-ul:list-disc prose-ul:pl-6 prose-ul:my-6
+            prose-ol:list-decimal prose-ol:pl-6 prose-ol:my-6
+            prose-li:text-navy-700 prose-li:marker:text-gold-500
+            prose-blockquote:border-l-4 prose-blockquote:border-gold-500 prose-blockquote:bg-navy-50/50
+            prose-blockquote:py-4 prose-blockquote:px-6 prose-blockquote:rounded-r-lg
+            prose-blockquote:not-italic prose-blockquote:text-navy-700
+            prose-img:rounded-xl prose-img:shadow-lg prose-img:my-8
+            prose-hr:border-navy-200 prose-hr:my-12"
+            dangerouslySetInnerHTML={{
+              __html: marked.parse(post.content, { breaks: true, gfm: true }),
             }}
           />
 
-          {/* Cantos dourados decorativos */}
-          <div className="absolute top-0 left-0 w-32 h-32 border-t-4 border-l-4 border-gold-500/20 rounded-tl-sm" />
-          <div className="absolute top-0 right-0 w-32 h-32 border-t-4 border-r-4 border-gold-500/20 rounded-tr-sm" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 border-b-4 border-l-4 border-gold-500/20 rounded-bl-sm" />
-          <div className="absolute bottom-0 right-0 w-32 h-32 border-b-4 border-r-4 border-gold-500/20 rounded-br-sm" />
-
-          <div className="relative px-8 md:px-20 py-16 md:py-20">
-            {/* Cabeçalho do artigo */}
-            <header className="mb-16 text-center">
-              {/* Selo dourado animado */}
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-                className="w-20 h-20 mx-auto mb-8 bg-navy-50 rounded-full flex items-center justify-center border-2 border-gold-500"
-              >
-                <span className="text-3xl text-gold-600">⚖️</span>
-              </motion.div>
-
-              {/* Categoria */}
-              {post.data.category && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex justify-center mb-6"
-                >
-                  <span className="px-6 py-2 bg-navy-900 text-gold-500 text-xs font-bold tracking-[0.3em] uppercase rounded-none">
-                    {post.data.category}
-                  </span>
-                </motion.div>
-              )}
-
-              {/* Título */}
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-navy-900 mb-8 leading-tight"
-              >
-                {post.data.title}
-              </motion.h1>
-
-              {/* Linha dourada */}
-              <div className="w-32 h-px bg-gold-500/50 mx-auto mb-8" />
-
-              {/* Metadados */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="flex flex-wrap items-center justify-center gap-8 text-navy-700"
-              >
-                {post.data.date && (
-                  <div className="flex items-center gap-3">
-                    <span className="text-gold-600 text-xl">📅</span>
-                    <time className="font-serif text-lg">
-                      {new Date(post.data.date).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric',
-                      })}
-                    </time>
-                  </div>
-                )}
-
-                <div className="w-px h-8 bg-navy-300" />
-
-                <div className="flex items-center gap-3">
-                  <span className="text-gold-600 text-xl">⚖️</span>
-                  <span className="font-serif text-lg">
-                    {post.data.author || `Dr. ${content.siteName}`}
-                  </span>
+          {/* Rodapé do artigo */}
+          <footer className="px-8 md:px-12 pb-8 md:pb-12 border-t border-navy-100 pt-8 mt-8">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-navy-50 rounded-full flex items-center justify-center">
+                  <span className="text-2xl text-navy-600">⚖️</span>
                 </div>
-
-                <div className="w-px h-8 bg-navy-300" />
-
-                <div className="flex items-center gap-3">
-                  <span className="text-gold-600 text-xl">📋</span>
-                  <span className="font-serif text-lg">{content.oab}</span>
-                </div>
-              </motion.div>
-            </header>
-
-            {/* Imagem de destaque */}
-            {post.data.image && (
-              <motion.figure
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="mb-16 -mx-4 md:-mx-10"
-              >
-                <div className="relative h-[500px] overflow-hidden border-8 border-white shadow-2xl">
-                  <img
-                    src={post.data.image}
-                    alt={post.data.title}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy-900/20 to-transparent" />
-                  <div className="absolute inset-0 border border-gold-500/30 pointer-events-none" />
-                </div>
-              </motion.figure>
-            )}
-
-            {/* Descrição em destaque */}
-            {post.data.description && (
-              <motion.blockquote
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="mb-16 p-10 bg-navy-50 border-l-8 border-gold-500 italic text-navy-800 text-xl leading-relaxed"
-              >
-                "{post.data.description}"
-              </motion.blockquote>
-            )}
-
-            {/* Conteúdo do artigo (Markdown) */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="prose prose-lg max-w-none
-                prose-headings:font-serif prose-headings:text-navy-900 prose-headings:font-bold
-                prose-h1:text-4xl prose-h1:mt-20 prose-h1:mb-10 prose-h1:text-center
-                prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-8 prose-h2:pb-4 prose-h2:border-b-2 prose-h2:border-navy-200
-                prose-h3:text-2xl prose-h3:mt-12 prose-h3:mb-6
-                prose-p:text-navy-800 prose-p:leading-relaxed prose-p:mb-10 prose-p:text-justify prose-p:text-lg
-                prose-a:text-gold-600 hover:prose-a:text-gold-500 prose-a:no-underline hover:prose-a:underline prose-a:transition-all
-                prose-strong:text-navy-900 prose-strong:font-bold
-                prose-ul:list-disc prose-ul:pl-8 prose-ul:my-10
-                prose-ol:list-decimal prose-ol:pl-8 prose-ol:my-10
-                prose-li:text-navy-800 prose-li:marker:text-gold-600 prose-li:text-lg prose-li:mb-3
-                prose-blockquote:border-l-8 prose-blockquote:border-gold-500 prose-blockquote:bg-navy-50/50 
-                prose-blockquote:py-8 prose-blockquote:px-10 prose-blockquote:rounded-none
-                prose-blockquote:not-italic prose-blockquote:text-navy-700 prose-blockquote:font-serif prose-blockquote:text-xl
-                prose-img:rounded-none prose-img:shadow-2xl prose-img:my-16 prose-img:border-4 prose-img:border-white
-                prose-hr:border-navy-200 prose-hr:my-20"
-              dangerouslySetInnerHTML={{
-                __html: marked.parse(post.content, { breaks: true, gfm: true }),
-              }}
-            />
-
-            {/* Tempo de leitura */}
-            <motion.footer
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="mt-16 text-center"
-            >
-              <span className="text-sm text-navy-500 font-mono tracking-wider bg-navy-50 px-6 py-3">
-                ⏱️ TEMPO DE LEITURA: {readingTime} MINUTOS
-              </span>
-            </motion.footer>
-
-            {/* Selo de autenticidade */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="mt-20 pt-12 border-t-2 border-navy-200 text-center"
-            >
-              <div className="inline-block p-8 bg-navy-50 border border-gold-500/30">
-                <div className="flex flex-col items-center gap-4">
-                  <motion.div
-                    whileHover={{ rotate: 360 }}
-                    transition={{ duration: 0.8 }}
-                    className="w-24 h-24 bg-navy-900 rounded-full flex items-center justify-center border-4 border-gold-500"
-                  >
-                    <span className="text-4xl text-gold-500">⚖️</span>
-                  </motion.div>
-
-                  <div>
-                    <p className="font-serif text-2xl text-navy-900 mb-2">{content.siteName}</p>
-                    <p className="text-navy-600 mb-1 font-mono text-sm">{content.oab}</p>
-                    <p className="text-xs text-navy-400 tracking-wider">ADVOGADO • OAB/SP</p>
-                  </div>
-
-                  {post.data.date && (
-                    <div className="mt-4 pt-4 border-t border-navy-200 w-full">
-                      <p className="text-sm text-navy-500 font-serif">
-                        Publicado em{' '}
-                        {new Date(post.data.date).toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: 'long',
-                          year: 'numeric',
-                        })}
-                      </p>
-                    </div>
-                  )}
+                <div>
+                  <p className="font-bold text-navy-900">{content.siteName}</p>
+                  <p className="text-sm text-navy-500">{content.oab}</p>
                 </div>
               </div>
-            </motion.div>
 
-            {/* Navegação inferior */}
-            <motion.nav
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              className="mt-16 pt-8 border-t-2 border-navy-200 flex justify-between items-center"
-            >
+              <div className="flex gap-2">
+                <span className="text-sm text-navy-500 bg-navy-50 px-4 py-2 rounded-full">
+                  ⏱️ {readingTime} min de leitura
+                </span>
+                <button
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({
+                        title: post.data.title,
+                        url: window.location.href,
+                      });
+                    } else {
+                      navigator.clipboard.writeText(window.location.href);
+                      alert('Link copiado!');
+                    }
+                  }}
+                  className="px-4 py-2 bg-navy-50 text-navy-700 rounded-full hover:bg-navy-100 transition-colors"
+                >
+                  Compartilhar
+                </button>
+              </div>
+            </div>
+
+            {/* Link de volta */}
+            <div className="mt-8 text-center">
               <Link
                 to="/blog"
-                className="group inline-flex items-center gap-3 text-navy-600 hover:text-gold-600 transition-colors"
+                className="inline-flex items-center gap-2 text-navy-600 hover:text-gold-600 transition-colors"
               >
-                <span className="w-8 h-px bg-gold-500/50 group-hover:w-12 transition-all" />
-                <span className="font-serif text-lg group-hover:translate-x-1 transition-transform">
-                  Todos os artigos
-                </span>
+                <span>←</span> Ver todos os artigos
               </Link>
-
-              <button
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({
-                      title: post.data.title,
-                      url: window.location.href,
-                    });
-                  } else {
-                    navigator.clipboard.writeText(window.location.href);
-                  }
-                }}
-                className="group inline-flex items-center gap-3 text-navy-600 hover:text-gold-600 transition-colors"
-              >
-                <span className="font-serif text-lg group-hover:-translate-x-1 transition-transform">
-                  Compartilhar
-                </span>
-                <span className="w-8 h-px bg-gold-500/50 group-hover:w-12 transition-all" />
-              </button>
-            </motion.nav>
-          </div>
+            </div>
+          </footer>
         </motion.article>
-
-        <div className="h-20" />
       </main>
 
       <WhatsAppButton whatsapp={content.whatsapp} />
