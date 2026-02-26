@@ -242,7 +242,7 @@ export default function Post() {
         email={content.email}
         address={content.address}
         whatsapp={content.whatsapp}
-      />
+      />,
     </div>
   );
 }
