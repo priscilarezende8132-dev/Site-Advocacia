@@ -64,11 +64,14 @@ export default function Post() {
     loadData();
   }, [slug]);
 
+  // ============================================
+  // CORREÇÃO PRINCIPAL: Configuração do marked
+  // ============================================
   function renderMarkdown(content) {
     if (!content) return '';
     marked.setOptions({
-      breaks: true,
-      gfm: true,
+      breaks: true,      // <-- Isso transforma quebras de linha em <br> (respeita o Enter)
+      gfm: true,         // <-- Suporte a tabelas, listas etc
       headerIds: true,
       mangle: false
     });
@@ -162,6 +165,9 @@ export default function Post() {
               font-size: 1.1rem;
               line-height: 1.9;
               color: #2C3E50;
+              word-wrap: break-word;      /* Quebra palavras longas */
+              overflow-wrap: break-word;
+              white-space: normal;
             }
             
             blockquote {
@@ -462,11 +468,18 @@ export default function Post() {
           </div>
         )}
 
-        {/* Artigo - com ref para impressão */}
+        {/* ========================================================= */}
+        {/* ARTIGO - COM CORREÇÃO DE QUEBRA DE LINHA               */}
+        {/* ========================================================= */}
         <article 
           ref={articleRef}
           className="
           prose prose-lg max-w-none
+          
+          /* CORREÇÃO PRINCIPAL: Quebra de linha automática */
+          break-words
+          whitespace-pre-wrap
+          
           prose-headings:font-serif prose-headings:text-navy-900 prose-headings:font-bold
           
           /* Título principal (h1) - estilo de introdução */
@@ -479,7 +492,7 @@ export default function Post() {
           /* Títulos de terceiro nível */
           prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4 prose-h3:text-navy-900/80
           
-          /* Parágrafos - confortáveis para leitura */
+          /* Parágrafos - confortáveis para leitura e com quebra */
           prose-p:text-gray-700 prose-p:leading-[1.8] prose-p:mb-8 prose-p:text-lg prose-p:font-light
           
           /* Primeiro parágrafo após título com destaque sutil */
