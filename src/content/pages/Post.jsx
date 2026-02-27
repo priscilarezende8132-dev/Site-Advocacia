@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { marked } from 'marked';
 import { motion } from 'framer-motion';
-import Header from '../components/Header'; // ← mesmo header do blog
+import Header from '../components/Header';
 import Footer from '../components/Footer';
 import WhatsAppButton from '../components/WhatsAppButton';
 import { loadContent } from '/src/utils/contentLoader';
@@ -343,45 +343,50 @@ export default function Post() {
 
   return (
     <div className="min-h-screen bg-[#F9F7F4]">
-      {/* MESMO HEADER DO BLOG - fundo escuro, menu dourado */}
+      {/* Header transparente original */}
       <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
       
       {/* Espaçamento para compensar o header fixo */}
       <div className="h-20"></div>
 
-      {/* Hero - título do artigo */}
-      <div className="bg-white border-b border-gray-200 py-16">
-        <div className="container-custom max-w-4xl">
+      {/* HERO AZUL - DESTAQUE PARA O ARTIGO */}
+      <div className="bg-gradient-to-br from-navy-900 to-navy-800 text-white py-20 px-4">
+        <div className="container-custom max-w-4xl mx-auto text-center">
+          {/* Link de voltar (sutil) */}
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 text-gray-500 hover:text-gold-600 mb-8 transition-colors group text-sm uppercase tracking-wider"
+            className="inline-flex items-center gap-2 text-white/60 hover:text-gold-500 mb-8 transition-colors group text-sm uppercase tracking-wider"
           >
             <span className="group-hover:-translate-x-1 transition-transform">←</span>
-            Voltar para artigos
+            TODOS OS ARTIGOS
           </Link>
 
+          {/* Categoria (se houver) */}
           {post.data.category && (
             <div className="mb-4">
-              <span className="text-xs font-bold tracking-[0.2em] uppercase text-gold-600">
+              <span className="text-xs font-bold tracking-[0.3em] uppercase text-gold-500">
                 {post.data.category}
               </span>
             </div>
           )}
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-navy-900 mb-6 leading-tight">
+          {/* Título principal */}
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-6 leading-tight">
             {post.data.title}
           </h1>
 
+          {/* Descrição (se houver) */}
           {post.data.description && (
-            <p className="text-xl text-gray-600 mb-8 font-light border-l-4 border-gold-500/30 pl-6 italic">
-              {post.data.description}
+            <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto font-light italic">
+              "{post.data.description}"
             </p>
           )}
 
-          <div className="flex items-center gap-4 text-sm text-gray-500 pt-4 border-t border-gray-200">
+          {/* Metadados do artigo */}
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-white/70 pt-4 border-t border-white/10 max-w-2xl mx-auto">
             {post.data.date && (
-              <time className="flex items-center gap-1">
-                <span>📅</span>
+              <time className="flex items-center gap-2">
+                <span className="text-gold-500">📅</span>
                 {new Date(post.data.date).toLocaleDateString('pt-BR', {
                   day: '2-digit',
                   month: 'long',
@@ -389,15 +394,20 @@ export default function Post() {
                 })}
               </time>
             )}
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <span>⚖️</span>
+            <span className="w-1 h-1 bg-white/20 rounded-full"></span>
+            <span className="flex items-center gap-2">
+              <span className="text-gold-500">⚖️</span>
               {post.data.author || `Dr. ${content.siteName}`}
             </span>
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <span>📋</span>
+            <span className="w-1 h-1 bg-white/20 rounded-full"></span>
+            <span className="flex items-center gap-2">
+              <span className="text-gold-500">📋</span>
               {content.oab}
+            </span>
+            <span className="w-1 h-1 bg-white/20 rounded-full"></span>
+            <span className="flex items-center gap-2">
+              <span className="text-gold-500">⏱️</span>
+              {Math.ceil(post.content.split(' ').length / 200)} min
             </span>
           </div>
         </div>
@@ -416,6 +426,7 @@ export default function Post() {
           </div>
         )}
 
+        {/* ARTIGO */}
         <article 
           ref={articleRef}
           className="
@@ -443,6 +454,38 @@ export default function Post() {
         >
           <div dangerouslySetInnerHTML={{ __html: renderMarkdown(post.content) }} />
         </article>
+
+        {/* Notas e referências */}
+        <div className="mt-20 pt-8 border-t border-gray-200">
+          <div className="text-sm text-gray-500 space-y-4">
+            <p className="flex items-start gap-2">
+              <span className="text-gold-600 font-bold">[1]</span>
+              <span>Tribunal de Justiça do Estado do Piauí. IRDR n. 0759842-91.2020.8.18.0000, Rel. Des. Haroldo Oliveira Rehem, j. 19.06.2024.</span>
+            </p>
+            <p className="flex items-start gap-2">
+              <span className="text-gold-600 font-bold">[2]</span>
+              <span>TJPI. Súmulas 33 e 34, aprovadas na 141ª Sessão Ordinária Administrativa de 15.07.2024.</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Bio do autor */}
+        <div className="mt-16 p-8 bg-white rounded-lg border border-gray-200 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="w-16 h-16 bg-navy-900 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-3xl text-gold-500">⚖️</span>
+            </div>
+            <div>
+              <h4 className="font-serif font-bold text-navy-900 mb-1">{content.siteName}</h4>
+              <p className="text-sm text-gray-500 mb-2">{content.oab}</p>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Advogado especialista em Direito do Consumidor e Direito Bancário. 
+                Membro da Comissão de Direito Bancário da OAB/SP. Autor de artigos 
+                jurídicos publicados em revistas especializadas.
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Navegação entre artigos */}
         <div className="mt-12 pt-6 border-t border-gray-200 flex justify-between items-center">
