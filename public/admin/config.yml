@@ -18,4 +18,12 @@ collections:
       - {label: "Descrição", name: "description", widget: "text", required: false, hint: "Resumo que aparece na lista de artigos"}
       - {label: "Imagem de destaque", name: "image", widget: "image", required: false, hint: "Imagem que aparece no card do artigo"}
       - {label: "Autor", name: "author", widget: "string", default: "Dr. Carlos Silva"}
-      - {label: "Conteúdo", name: "body", widget: "markdown"}
+
+      # CAMPO PRINCIPAL DO ARTIGO — AGORA COM BARRA DE FERRAMENTAS
+      - label: "Conteúdo"
+        name: "body"
+        widget: "markdown"
+        modes: ["rich_text"]                # ← Ativa o editor visual
+        buttons: ["bold", "italic", "link", "heading-one", "heading-two", "heading-three", "quote", "code", "bulleted-list", "numbered-list"] 
+        editor_components: ["image", "code-block"]
+        hint: "Use a barra de ferramentas para formatar o texto. Quebras de linha viram parágrafos automaticamente."
