@@ -56,9 +56,25 @@ export default function Contato() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Formulário enviado:', formData);
+    
+    // Criar mensagem formatada para WhatsApp
+    const whatsappMessage = `*Nova mensagem do site - Contato*\n\n` +
+      `*Nome:* ${formData.name}\n` +
+      `*E-mail:* ${formData.email}\n` +
+      `*Telefone:* ${formData.phone}\n` +
+      `${formData.subject ? `*Assunto:* ${formData.subject}\n` : ''}` +
+      `*Mensagem:*\n${formData.message}`;
+
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    const whatsappLink = `https://wa.me/${content.whatsapp}?text=${encodedMessage}`;
+
+    // Abrir WhatsApp com a mensagem
+    window.open(whatsappLink, '_blank');
+
+    // Mostrar feedback de sucesso
     setSubmitted(true);
     
+    // Limpar formulário após 3 segundos
     setTimeout(() => {
       setSubmitted(false);
       setFormData({
@@ -188,7 +204,7 @@ export default function Contato() {
                   </div>
                   <h3 className="text-2xl font-bold text-primary mb-4">Mensagem enviada com sucesso!</h3>
                   <p className="text-gray-600">
-                    Agradecemos seu contato. Em breve retornaremos com uma resposta.
+                    Você será redirecionado para o WhatsApp para finalizar o envio.
                   </p>
                 </div>
               ) : (
@@ -258,11 +274,16 @@ export default function Contato() {
 
                     <button
                       type="submit"
-                      className="w-full bg-primary text-white py-4 rounded-lg font-bold text-lg hover:bg-primary/90 transition-all hover:scale-105 shadow-lg group"
+                      className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-lg font-bold text-lg hover:from-green-600 hover:to-green-700 transition-all hover:scale-105 shadow-lg group flex items-center justify-center gap-2"
                     >
-                      <span>Enviar Mensagem</span>
-                      <i className="fas fa-paper-plane ml-2 group-hover:translate-x-1 transition-transform"></i>
+                      <i className="fab fa-whatsapp text-xl"></i>
+                      <span>Enviar via WhatsApp</span>
+                      <i className="fas fa-external-link-alt text-sm group-hover:translate-x-1 transition-transform"></i>
                     </button>
+
+                    <p className="text-xs text-gray-500 text-center mt-4">
+                      Ao enviar, você será redirecionado para o WhatsApp para finalizar o envio da mensagem.
+                    </p>
                   </form>
                 </>
               )}
