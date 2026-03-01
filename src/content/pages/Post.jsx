@@ -16,14 +16,19 @@ function extractYouTubeId(url) {
   return (match && match[2].length === 11) ? match[2] : null;
 }
 
-// Função para processar o campo de vídeo (salvo como JSON no frontmatter)
+// Função para processar o campo de vídeo de destaque
 function processFeaturedVideo(videoData) {
   if (!videoData) return null;
   
-  // Se já for um objeto, usa direto
-  if (typeof videoData === 'object') {
-    if (videoData.type === 'youtube' && videoData.url) {
-      const videoId = extractYouTubeId(videoData.url);
+  try {
+    // Se for string, tenta parsear JSON
+    let data = videoData;
+    if (typeof videoData === 'string') {
+      data = JSON.parse(videoData);
+    }
+    
+    if (data.type === 'youtube' && data.url) {
+      const videoId = extractYouTubeId(data.url);
       if (videoId) {
         return (
           <div className="mb-8">
@@ -36,13 +41,13 @@ function processFeaturedVideo(videoData) {
                 title="Vídeo do artigo"
               />
             </div>
-            {videoData.caption && (
-              <p className="text-center text-sm text-gray-500 mt-2">{videoData.caption}</p>
+            {data.caption && (
+              <p className="text-center text-sm text-gray-500 mt-2">{data.caption}</p>
             )}
           </div>
         );
       }
-    } else if (videoData.type === 'upload' && videoData.file) {
+    } else if (data.type === 'upload' && data.file) {
       return (
         <div className="mb-8">
           <video
@@ -50,25 +55,17 @@ function processFeaturedVideo(videoData) {
             className="w-full rounded-lg shadow-lg"
             style={{ maxHeight: '500px' }}
           >
-            <source src={videoData.file} type="video/mp4" />
+            <source src={data.file} type="video/mp4" />
             Seu navegador não suporta vídeos.
           </video>
-          {videoData.caption && (
-            <p className="text-center text-sm text-gray-500 mt-2">{videoData.caption}</p>
+          {data.caption && (
+            <p className="text-center text-sm text-gray-500 mt-2">{data.caption}</p>
           )}
         </div>
       );
     }
-  }
-  
-  // Se for string, tenta parsear JSON
-  if (typeof videoData === 'string') {
-    try {
-      const parsed = JSON.parse(videoData);
-      return processFeaturedVideo(parsed);
-    } catch (e) {
-      console.error('Erro ao parsear vídeo:', e);
-    }
+  } catch (e) {
+    console.error('Erro ao processar vídeo:', e);
   }
   
   return null;
@@ -79,43 +76,26 @@ function parseFrontmatter(text) {
   if (!match) return { data: {}, content: text };
 
   const data = {};
-  
-  // Processar cada linha do frontmatter
   const lines = match[1].split('\n');
-  let currentKey = null;
-  let currentValue = '';
-  let inMultiline = false;
   
   lines.forEach((line) => {
     if (line.trim() === '') return;
     
-    // Se está em um valor multilinha (como JSON)
-    if (inMultiline) {
-      currentValue += line;
-      if (line.trim().endsWith('}')) {
-        // Fim do JSON
-        inMultiline = false;
-        try {
-          data[currentKey] = JSON.parse(currentValue);
-        } catch (e) {
-          data[currentKey] = currentValue;
-        }
-      }
-      return;
-    }
-    
-    // Linha normal com chave: valor
-    if (line.includes(': ')) {
-      const [key, ...valueParts] = line.split(': ');
-      let value = valueParts.join(': ').trim();
+    // Tenta encontrar padrão de chave: valor
+    const colonIndex = line.indexOf(': ');
+    if (colonIndex > 0) {
+      const key = line.substring(0, colonIndex).trim();
+      let value = line.substring(colonIndex + 2).trim();
       
-      // Verifica se é início de um objeto JSON
-      if (value === '{') {
-        currentKey = key.trim();
-        currentValue = '';
-        inMultiline = true;
+      // Tenta parsear JSON se o valor começar com { ou [
+      if (value.startsWith('{') && value.endsWith('}')) {
+        try {
+          data[key] = JSON.parse(value);
+        } catch {
+          data[key] = value;
+        }
       } else {
-        data[key.trim()] = value;
+        data[key] = value;
       }
     }
   });
@@ -123,8 +103,10 @@ function parseFrontmatter(text) {
   return { data, content: match[2] };
 }
 
+// Renderizador personalizado para o marked
 const renderer = new marked.Renderer();
 
+// Processar links (YouTube e vídeos)
 renderer.link = (href, title, text) => {
   const youtubeId = extractYouTubeId(href);
   if (youtubeId) {
@@ -150,6 +132,7 @@ renderer.link = (href, title, text) => {
   return `<a href="${href}" title="${title || ''}" target="_blank" rel="noopener noreferrer">${text}</a>`;
 };
 
+// Processar imagens
 renderer.image = (href, title, text) => {
   return `
     <img 
@@ -298,20 +281,6 @@ export default function Post() {
     setShowShareMenu(false);
   };
 
-  const shareOnLinkedIn = () => {
-    const url = encodeURIComponent(window.location.href);
-    const title = encodeURIComponent(post?.data?.title || '');
-    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
-    setShowShareMenu(false);
-  };
-
-  const shareOnTwitter = () => {
-    const text = encodeURIComponent(post?.data?.title || '');
-    const url = encodeURIComponent(window.location.href);
-    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
-    setShowShareMenu(false);
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-primary flex items-center justify-center px-4">
@@ -345,23 +314,15 @@ export default function Post() {
             </Link>
           </div>
         </div>
-        <Footer
-          siteName={content.siteName}
-          oab={content.oab}
-          phone={content.phone}
-          email={content.email}
-          address={content.address}
-          whatsapp={content.whatsapp}
-        />
+        <Footer {...content} />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
+      <Header {...content} />
 
-      {/* Faixa Azul */}
       <section className="bg-gradient-to-r from-primary to-secondary text-white pt-32 pb-16">
         <div className="container-custom text-center">
           <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-3 inline-block">
@@ -385,7 +346,7 @@ export default function Post() {
           <i className="fas fa-arrow-left"></i> Todos os artigos
         </Link>
 
-        {/* 🔥 VÍDEO DE DESTAQUE - AGORA FUNCIONA! */}
+        {/* VÍDEO DE DESTAQUE */}
         {post.data.featured_video && processFeaturedVideo(post.data.featured_video)}
 
         {/* Imagem de destaque (se não tiver vídeo) */}
@@ -432,14 +393,7 @@ export default function Post() {
       </main>
 
       <WhatsAppButton whatsapp={content.whatsapp} />
-      <Footer
-        siteName={content.siteName}
-        oab={content.oab}
-        phone={content.phone}
-        email={content.email}
-        address={content.address}
-        whatsapp={content.whatsapp}
-      />
+      <Footer {...content} />
     </div>
   );
 }
