@@ -53,7 +53,7 @@ export default function Footer({ siteName, oab, phone, email, address, whatsapp 
               </div>
               <div className="text-left">
                 <p className="text-[10px] sm:text-xs text-white/40">Confiança e</p>
-                <p className="text-xs sm:text-sm text-white/80">Tradição desde 2012</p>
+                <p className="text-xs sm:text-sm text-white/80">Tradição desde 2014</p>
               </div>
             </div>
           </div>
