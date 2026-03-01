@@ -5,6 +5,10 @@
 media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
+# Pasta separada para vídeos
+media_folder_video: "public/videos/uploads"
+public_folder_video: "/videos/uploads"
+
 collections:
   - name: "posts"
     label: "Artigos"
@@ -16,16 +20,49 @@ collections:
       - {label: "Data", name: "date", widget: "datetime"}
       - {label: "Categoria", name: "category", widget: "string", required: false}
       - {label: "Descrição", name: "description", widget: "text", required: false, hint: "Resumo que aparece na lista de artigos"}
+      
+      # Imagem de destaque
       - {label: "Imagem de destaque", name: "image", widget: "image", required: false, 
          hint: "Imagem que aparece no card do artigo",
          media_library: { config: { multiple: false, max_file_size: 5242880 }}}
+      
+      # 🔥 NOVO: Vídeo de destaque (igual ao campo de imagem!)
+      - label: "Vídeo de destaque"
+        name: "featured_video"
+        widget: "file"
+        required: false
+        hint: "Faça upload de um vídeo MP4 ou cole link do YouTube"
+        media_library:
+          config:
+            multiple: false
+            max_file_size: 52428800 # 50MB para vídeos
+        field:
+          - name: "video_type"
+            label: "Tipo de vídeo"
+            widget: "select"
+            options: ["upload", "youtube"]
+            default: "upload"
+          - name: "video_file"
+            label: "Arquivo de vídeo"
+            widget: "file"
+            required: false
+            media_library:
+              config:
+                multiple: false
+                max_file_size: 52428800
+          - name: "youtube_url"
+            label: "URL do YouTube"
+            widget: "string"
+            required: false
+            hint: "Cole o link do vídeo (ex: https://youtu.be/...)"
+      
       - {label: "Autor", name: "author", widget: "string", default: "Edson Silva Maltez"}
 
-      # CAMPO PRINCIPAL DO ARTIGO — COM BARRA DE FERRAMENTAS
+      # CAMPO PRINCIPAL DO ARTIGO
       - label: "Conteúdo"
         name: "body"
         widget: "markdown"
         modes: ["rich_text"]
         buttons: ["bold", "italic", "link", "heading-one", "heading-two", "heading-three", "quote", "code", "bulleted-list", "numbered-list"] 
-        editor_components: ["image", "code-block", "youtube", "video", "upload-video"]
-        hint: "Use a barra de ferramentas para formatar o texto. Para vídeos, use os botões YouTube ou Upload de Vídeo."
+        editor_components: ["image", "code-block"]
+        hint: "Use a barra de ferramentas para formatar o texto."
