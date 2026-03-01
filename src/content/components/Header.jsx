@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -13,6 +13,10 @@ export default function Header({ siteName, oab, whatsapp, logo }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hoveredLink, setHoveredLink] = useState(null);
+  const [dragStartY, setDragStartY] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const menuRef = useRef(null);
 
   // Links das redes sociais
   const socialLinks = {
@@ -32,6 +36,7 @@ export default function Header({ siteName, oab, whatsapp, logo }) {
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
+      setDragOffset(0);
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -63,6 +68,38 @@ export default function Header({ siteName, oab, whatsapp, logo }) {
 
   const handleLinkClick = () => {
     setIsMenuOpen(false);
+  };
+
+  // Funções de drag
+  const handleDragStart = (e) => {
+    setDragStartY(e.touches[0].clientY);
+    setIsDragging(true);
+  };
+
+  const handleDragMove = (e) => {
+    if (!isDragging) return;
+    
+    const currentY = e.touches[0].clientY;
+    const deltaY = currentY - dragStartY;
+    
+    // Só permite arrastar para baixo (valores positivos)
+    if (deltaY > 0) {
+      setDragOffset(deltaY);
+    }
+  };
+
+  const handleDragEnd = () => {
+    if (!isDragging) return;
+    
+    setIsDragging(false);
+    
+    // Se arrastou mais de 100px, fecha o menu
+    if (dragOffset > 100) {
+      setIsMenuOpen(false);
+    } else {
+      // Se não, volta à posição original
+      setDragOffset(0);
+    }
   };
 
   return (
@@ -222,7 +259,7 @@ export default function Header({ siteName, oab, whatsapp, logo }) {
         </div>
       </header>
 
-      {/* MENU BOTTOM SHEET - OPÇÃO 3 */}
+      {/* MENU BOTTOM SHEET COM DRAG TO CLOSE */}
       <div className={`fixed inset-0 z-50 md:hidden transition-all duration-500 ${
         isMenuOpen ? 'visible' : 'invisible'
       }`}>
@@ -234,23 +271,35 @@ export default function Header({ siteName, oab, whatsapp, logo }) {
           onClick={() => setIsMenuOpen(false)}
         />
         
-        {/* Menu que sobe de baixo */}
-        <div className={`absolute bottom-0 left-0 right-0 bg-primary rounded-t-3xl shadow-2xl transition-transform duration-500 ${
-          isMenuOpen ? 'translate-y-0' : 'translate-y-full'
-        }`}>
+        {/* Menu que sobe de baixo - COM DRAG TO CLOSE */}
+        <div 
+          ref={menuRef}
+          className={`absolute bottom-0 left-0 right-0 bg-primary rounded-t-3xl shadow-2xl transition-transform duration-300 ${
+            isMenuOpen ? 'translate-y-0' : 'translate-y-full'
+          }`}
+          style={{
+            transform: isMenuOpen ? `translateY(${dragOffset}px)` : 'translateY(100%)',
+            transition: isDragging ? 'none' : 'transform 0.3s ease-out'
+          }}
+          onTouchStart={handleDragStart}
+          onTouchMove={handleDragMove}
+          onTouchEnd={handleDragEnd}
+        >
           
-          {/* Handle (indicador) */}
-          <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mt-4 mb-2"></div>
+          {/* Handle (indicador) - Área de drag */}
+          <div className="w-full py-2 flex justify-center cursor-grab active:cursor-grabbing">
+            <div className="w-12 h-1 bg-white/40 rounded-full hover:bg-white/60 transition-colors"></div>
+          </div>
           
-          <div className="px-6 py-6 pb-8">
-            {/* Logo no menu - AUMENTADA PARA 140px */}
+          <div className="px-6 py-4 pb-8">
+            {/* Logo no menu */}
             <div className="flex items-center justify-between mb-6">
               <img 
                 src="/images/logo/logo-principal.png" 
                 alt={siteName} 
                 className="w-auto brightness-0 invert"
                 style={{
-                  height: '140px' // AUMENTADO de 100px para 140px
+                  height: '140px'
                 }}
               />
               <button 
