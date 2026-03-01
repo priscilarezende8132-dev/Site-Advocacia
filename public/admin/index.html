@@ -3,10 +3,170 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gerenciar Site</title>
+  <title>Gerenciar Site - Edson Maltez</title>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <style>
+    /* Estilo para os botões de vídeo */
+    .css-1dbjc4n {
+      background-color: #0a2472;
+    }
+  </style>
 </head>
 <body>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  
+  <script>
+    // Registrar widget personalizado de YouTube (botão visual)
+    CMS.registerEditorComponent({
+      id: "youtube",
+      label: "YouTube",
+      icon: "youtube",
+      fields: [
+        {
+          name: "url",
+          label: "URL do YouTube",
+          widget: "string",
+          hint: "Cole o link do vídeo (ex: https://youtu.be/... ou https://youtube.com/watch?v=...)"
+        },
+        {
+          name: "title",
+          label: "Título (opcional)",
+          widget: "string",
+          required: false
+        }
+      ],
+      pattern: /^{{youtube (.*?)}}$/,
+      fromBlock: function(match) {
+        return {
+          url: match[1]
+        };
+      },
+      toBlock: function(obj) {
+        return `{{youtube ${obj.url}}}`;
+      },
+      toPreview: function(obj) {
+        const videoId = extractYouTubeId(obj.url);
+        if (videoId) {
+          return `<div style="position: relative; padding-bottom: 56.25%; height: 0; margin: 20px 0; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <iframe src="https://www.youtube.com/embed/${videoId}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+            <p style="text-align: center; margin-top: 10px; font-size: 14px; color: #666;">${obj.title || 'Vídeo do YouTube'}</p>
+          </div>`;
+        }
+        return `<p style="color: red;">URL do YouTube inválida: ${obj.url}</p>`;
+      }
+    });
+
+    // Registrar widget personalizado de vídeo MP4 (upload direto)
+    CMS.registerEditorComponent({
+      id: "video",
+      label: "Vídeo MP4",
+      icon: "video",
+      fields: [
+        {
+          name: "file",
+          label: "Arquivo de vídeo",
+          widget: "file",
+          hint: "Faça upload do vídeo (formatos: MP4, WebM, Ogg)",
+          media_library: {
+            config: {
+              multiple: false,
+              max_file_size: 10485760 // 10MB
+            }
+          }
+        },
+        {
+          name: "caption",
+          label: "Legenda",
+          widget: "string",
+          required: false
+        }
+      ],
+      pattern: /^{{video (.*?)}}$/,
+      fromBlock: function(match) {
+        return {
+          file: match[1]
+        };
+      },
+      toBlock: function(obj) {
+        return `{{video ${obj.file}}}`;
+      },
+      toPreview: function(obj) {
+        return `
+          <div style="margin: 20px 0;">
+            <video controls style="width: 100%; max-height: 500px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+              <source src="${obj.file}" type="video/mp4">
+              Seu navegador não suporta vídeos.
+            </video>
+            ${obj.caption ? `<p style="text-align: center; margin-top: 8px; font-size: 14px; color: #666;">${obj.caption}</p>` : ''}
+          </div>
+        `;
+      }
+    });
+
+    // Registrar widget de upload de vídeo (atalho na barra de ferramentas)
+    CMS.registerEditorComponent({
+      id: "upload-video",
+      label: "Upload de Vídeo",
+      icon: "video",
+      fields: [
+        {
+          name: "file",
+          label: "Selecionar vídeo",
+          widget: "file",
+          hint: "Escolha um vídeo do seu computador",
+          media_library: {
+            config: {
+              multiple: false,
+              max_file_size: 10485760
+            }
+          }
+        }
+      ],
+      pattern: /^{{upload-video (.*?)}}$/,
+      fromBlock: function(match) {
+        return {
+          file: match[1]
+        };
+      },
+      toBlock: function(obj) {
+        return `{{upload-video ${obj.file}}}`;
+      },
+      toPreview: function(obj) {
+        return `
+          <video controls style="width: 100%; max-height: 500px; border-radius: 12px; margin: 20px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <source src="${obj.file}" type="video/mp4">
+            Seu navegador não suporta vídeos.
+          </video>
+        `;
+      }
+    });
+
+    // Função auxiliar para extrair ID do YouTube
+    function extractYouTubeId(url) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? match[2] : null;
+    }
+
+    // Personalizar a barra de ferramentas do editor
+    CMS.registerEditorComponent({
+      id: "youtube-button",
+      label: "YouTube",
+      icon: "youtube",
+      fields: [],
+      pattern: /^$/,
+      fromBlock: function() {
+        return {};
+      },
+      toBlock: function() {
+        return '';
+      },
+      toPreview: function() {
+        return '';
+      }
+    });
+
+    console.log('Widgets de vídeo registrados com sucesso!');
+  </script>
 </body>
 </html>

@@ -15,10 +15,50 @@ function extractYouTubeId(url) {
   return (match && match[2].length === 11) ? match[2] : null;
 }
 
+// Processar conteúdo para substituir os placeholders dos widgets
+function processCustomWidgets(content) {
+  if (!content) return content;
+  
+  // Substituir {{youtube URL}}
+  let processed = content.replace(/\{\{youtube (.*?)\}\}/g, (match, url) => {
+    const videoId = extractYouTubeId(url);
+    if (videoId) {
+      return `
+<div style="position: relative; padding-bottom: 56.25%; height: 0; margin: 30px 0; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  <iframe src="https://www.youtube.com/embed/${videoId}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+</div>
+      `;
+    }
+    return `<p style="color: red;">Vídeo inválido: ${url}</p>`;
+  });
+
+  // Substituir {{video URL}}
+  processed = processed.replace(/\{\{video (.*?)\}\}/g, (match, url) => {
+    return `
+<video controls style="width: 100%; max-height: 500px; border-radius: 12px; margin: 30px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  <source src="${url}" type="video/mp4">
+  Seu navegador não suporta vídeos.
+</video>
+    `;
+  });
+
+  // Substituir {{upload-video URL}}
+  processed = processed.replace(/\{\{upload-video (.*?)\}\}/g, (match, url) => {
+    return `
+<video controls style="width: 100%; max-height: 500px; border-radius: 12px; margin: 30px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  <source src="${url}" type="video/mp4">
+  Seu navegador não suporta vídeos.
+</video>
+    `;
+  });
+
+  return processed;
+}
+
 // Renderizador personalizado para o marked
 const renderer = new marked.Renderer();
 
-// Renderizar links do YouTube como iframes
+// Links do YouTube
 renderer.link = (href, title, text) => {
   const youtubeId = extractYouTubeId(href);
   if (youtubeId) {
@@ -108,7 +148,11 @@ export default function Post() {
         if (response.ok) {
           const text = await response.text();
           const { data, content } = parseFrontmatter(text);
-          setPost({ slug, data, content });
+          
+          // Processar os widgets personalizados
+          const processedContent = processCustomWidgets(content);
+          
+          setPost({ slug, data, content: processedContent });
         } else {
           setPost(null);
         }
@@ -139,9 +183,15 @@ export default function Post() {
     // Converte caminhos relativos de imagens para absolutos
     const images = articleClone.querySelectorAll('img');
     images.forEach(img => {
-      if (img.src.startsWith('/')) {
-        img.src = window.location.origin + img.src;
+      if (img.src && !img.src.startsWith('http')) {
+        img.src = window.location.origin + (img.src.startsWith('/') ? img.src : '/' + img.src);
       }
+      img.style.maxWidth = '100%';
+      img.style.height = 'auto';
+      img.style.display = 'block';
+      img.style.margin = '20px auto';
+      img.style.borderRadius = '8px';
+      img.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
     });
 
     // Converte vídeos para funcionarem na impressão

@@ -21,11 +21,11 @@ collections:
          media_library: { config: { multiple: false, max_file_size: 5242880 }}}
       - {label: "Autor", name: "author", widget: "string", default: "Edson Silva Maltez"}
 
-      # CAMPO PRINCIPAL DO ARTIGO — COM BARRA DE FERRAMENTAS E VÍDEO
+      # CAMPO PRINCIPAL DO ARTIGO — COM BARRA DE FERRAMENTAS
       - label: "Conteúdo"
         name: "body"
         widget: "markdown"
         modes: ["rich_text"]
         buttons: ["bold", "italic", "link", "heading-one", "heading-two", "heading-three", "quote", "code", "bulleted-list", "numbered-list"] 
-        editor_components: ["image", "code-block"]
-        hint: "Use a barra de ferramentas para formatar o texto. Para vídeos: YouTube (cole o link) ou MP4 (use a sintaxe ![video](url.mp4))"
+        editor_components: ["image", "code-block", "youtube", "video", "upload-video"]
+        hint: "Use a barra de ferramentas para formatar o texto. Para vídeos, use os botões YouTube ou Upload de Vídeo."
