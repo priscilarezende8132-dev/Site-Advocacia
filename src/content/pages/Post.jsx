@@ -22,10 +22,7 @@ function processFeaturedVideo(videoData) {
   
   if (!videoData) return null;
   
-  // Se já for um objeto, usa direto
   if (typeof videoData === 'object') {
-    console.log('É objeto, processando...');
-    
     if (videoData.type === 'youtube' && videoData.url) {
       const videoId = extractYouTubeId(videoData.url);
       if (videoId) {
@@ -85,14 +82,12 @@ function parseFrontmatter(text) {
     
     const colonIndex = line.indexOf(':');
     const key = line.substring(0, colonIndex).trim();
-    let value = line.substring(colonIndex + 1).trim();
     
     // Verifica se é um objeto aninhado (começa com espaço na próxima linha)
     if (i + 1 < lines.length && lines[i + 1].startsWith('  ')) {
       const obj = {};
       i++;
       
-      // Processa linhas indentadas
       while (i < lines.length && lines[i].startsWith('  ')) {
         const nestedLine = lines[i].trim();
         if (nestedLine.includes(':')) {
@@ -107,6 +102,7 @@ function parseFrontmatter(text) {
       data[key] = obj;
     } else {
       // Valor simples
+      const value = line.substring(colonIndex + 1).trim();
       data[key] = value;
       i++;
     }
@@ -367,9 +363,10 @@ export default function Post() {
     <div className="min-h-screen bg-gray-50">
       <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
 
-      <section className="bg-gradient-to-r from-primary to-secondary text-white pt-32 pb-16">
+      {/* FAIXA AZUL - AUMENTADA para dar espaço ao header transparente */}
+      <section className="bg-gradient-to-r from-primary to-secondary text-white pt-40 pb-20 md:pt-44 md:pb-24 lg:pt-48 lg:pb-28">
         <div className="container-custom text-center">
-          <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-3 inline-block">
+          <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-4 inline-block">
             DOUTRINA & JURISPRUDÊNCIA
           </span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
@@ -380,7 +377,7 @@ export default function Post() {
               {post.data.description}
             </p>
           )}
-          <div className="w-20 h-1 bg-accent mx-auto mt-6"></div>
+          <div className="w-20 h-1 bg-accent mx-auto mt-8"></div>
         </div>
       </section>
 
@@ -390,16 +387,16 @@ export default function Post() {
           <i className="fas fa-arrow-left"></i> Todos os artigos
         </Link>
 
-        {/* 🎥 VÍDEO DE DESTAQUE - SEMPRE APARECE SE TIVER */}
+        {/* 🎥 VÍDEO DE DESTAQUE */}
         {post.data.featured_video && processFeaturedVideo(post.data.featured_video)}
 
-        {/* 🖼️ IMAGEM DE DESTAQUE - AGORA APARECE MESMO COM VÍDEO */}
+        {/* 🖼️ IMAGEM DE DESTAQUE - TAMANHO REDUZIDO (OPÇÃO 4) */}
         {post.data.image && (
-          <div className="mb-8">
+          <div className="mb-8 flex justify-center">
             <img
               src={post.data.image}
               alt={post.data.title}
-              className="w-full h-auto rounded-lg shadow-lg"
+              className="w-full sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 h-auto rounded-lg shadow-lg"
             />
           </div>
         )}
