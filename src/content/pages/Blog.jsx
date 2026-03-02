@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import WhatsAppButton from '../components/WhatsAppButton';
+import LoadingScreen from '../components/LoadingScreen'; // ← IMPORT ADICIONADO!
 import { loadContent } from "/src/utils/contentLoader";
 import '../styles/animations.css';
 
@@ -79,22 +80,13 @@ export default function Blog() {
     p.data.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-primary px-4">
-        <div className="text-center">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white text-base sm:text-lg">Carregando artigos...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="font-sans overflow-x-hidden">
       <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
 
-      {/* Hero Section - COM GRADIENTE DESDE O TOPO */}
+      {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary to-secondary text-white pt-37 pb-25 md:pb-24 lg:pb-28 -mt-1">
         <div className="container-custom text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 animate-fadeInUp">Artigos & Publicações</h1>

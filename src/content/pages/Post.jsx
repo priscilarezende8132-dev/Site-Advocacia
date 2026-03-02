@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import WhatsAppButton from '../components/WhatsAppButton';
+import LoadingScreen from '../components/LoadingScreen'; // ← IMPORT ADICIONADO!
 import { loadContent } from '/src/utils/contentLoader';
 import '../styles/animations.css';
 
@@ -304,22 +305,7 @@ export default function Post() {
     setShowShareMenu(false);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-primary flex items-center justify-center px-4">
-        <div className="text-center">
-          <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 mx-auto mb-4">
-            <div className="absolute inset-0 border-2 border-accent/20 rounded-full"></div>
-            <div className="absolute inset-0 border-2 border-accent border-t-transparent rounded-full animate-spin"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-3xl sm:text-4xl text-accent">⚖️</span>
-            </div>
-          </div>
-          <p className="text-white/80 text-sm sm:text-base">Carregando artigo...</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   if (!post) {
     return (
@@ -347,14 +333,7 @@ export default function Post() {
             </Link>
           </motion.div>
         </div>
-        <Footer
-          siteName={content.siteName}
-          oab={content.oab}
-          phone={content.phone}
-          email={content.email}
-          address={content.address}
-          whatsapp={content.whatsapp}
-        />
+        <Footer {...content} />
       </div>
     );
   }
@@ -363,7 +342,7 @@ export default function Post() {
     <div className="min-h-screen bg-gray-50">
       <Header siteName={content.siteName} oab={content.oab} whatsapp={content.whatsapp} />
 
-      {/* FAIXA AZUL - AUMENTADA para dar espaço ao header transparente */}
+      {/* Faixa Azul */}
       <section className="bg-gradient-to-r from-primary to-secondary text-white pt-40 pb-20 md:pt-44 md:pb-24 lg:pt-48 lg:pb-28">
         <div className="container-custom text-center">
           <span className="text-accent font-semibold tracking-wider uppercase text-sm mb-4 inline-block">
@@ -390,7 +369,7 @@ export default function Post() {
         {/* 🎥 VÍDEO DE DESTAQUE */}
         {post.data.featured_video && processFeaturedVideo(post.data.featured_video)}
 
-        {/* 🖼️ IMAGEM DE DESTAQUE - TAMANHO REDUZIDO (OPÇÃO 4) */}
+        {/* 🖼️ IMAGEM DE DESTAQUE */}
         {post.data.image && (
           <div className="mb-8 flex justify-center">
             <img
